@@ -1,0 +1,87 @@
+<!Bertazzoni-Alberi-Montanari>
+<html>
+  <head>
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <title>Breakout game</title>
+    <style media="screen">
+
+
+      html,body {
+		background-image: url("sfondo.jpg");
+	    background-repeat: no-repeat;
+		background-size: cover;
+		background-height: 100%;
+		background-width: 100%;
+		background-margin: 0;
+		background-padding: 0;
+		width: 100%;
+		height: 100%;
+		margin: 0;
+		padding: 0;
+		overflow: hidden;
+		cursor: url("puntatore.png"), auto;
+	}
+
+	.play{
+	    background-color: #9e0606;
+		color: black;
+		font-size: 24px;
+    	border-radius: 15px;
+    	padding: 32px 46px;
+
+    	box-shadow: 0 9px #262626;
+    	cursor: pointer;
+    	display: inline-block;
+
+		font-family: OCR A Std, monospace;
+      }
+
+     .play:hover {
+	     background-color: #c80707;
+	     cursor: url("cursore.png"), auto;
+	    }
+
+     .play:active {
+	  	background-color: #c80707;
+	  	box-shadow: 0 5px #666;
+	  	transform: translateY(4px);
+	 }
+
+	 .menu{
+		position: absolute;
+		left: 0;
+		top: 10%;
+		width: 100%;
+		text-align: center;
+		transform: scale(0.9);
+	 }
+
+	 .title{
+		color: #9e0606;
+		text-align: center;
+		font-size: 72px;
+		font-family: OCR A Std, monospace;
+		text-shadow: 4px 4px 4px black;
+	 }
+	 .testo{
+		color: #9e0606;
+		text-align: center;
+		font-family: OCR A Std, monospace;
+		text-shadow: 4px 4px 4px black;
+	 }
+
+    </style>
+  </head>
+  <body>
+	<img src="sfondo.jpg" id="sfondo" />
+	  <div class="menu">
+		  <h1 class="title">Breakout:</h1><br>
+		  <a href="Livello1.html"><button class="play">&#9774; Livello Facile</button></a><br><br>
+		  <a href="Livello2.html"><button class="play">&#x2694; Livello Medio</button></a><br><br>
+		  <a href="Livello3.html"><button class="play">&#x2620; Livello Difficile</button></a><br><br>
+		  <p class="testo">(Completa il Livello Difficile per accedere ad un Livello BONUS!)</p>
+	  </div>
+  </body>
+</html>

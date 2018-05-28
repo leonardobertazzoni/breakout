@@ -1,0 +1,280 @@
+<!Bertazzoni-Alberi-Montanari>
+<html>
+  <head>
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <title>Breakout game</title>
+    <style media="screen">
+
+		#myCanvas{
+			cursor: none;
+		}
+
+      * { padding: 0; margin: 0; }
+      canvas { background: #1a1a1a; display: block; margin: 0 auto; margin-top: 10px; border: solid 2px #9e0606;}
+      html,body {
+		background-image: url("sfondo.jpg");
+	    background-repeat: no-repeat;
+		background-size: cover;
+		background-height:100%;
+		background-width: 100%;
+		background-margin: 0;
+		background-padding: 0;
+		width: 100%;
+		height: 100%;
+		margin: 0;
+		padding: 0;
+		overflow: hidden;
+		cursor: url("puntatore.png"), auto;
+	}
+	.play{
+	    background-color: #9e0606;
+		color: black;
+		font-size: 16px;
+    	border-radius: 15px;
+    	padding: 32px 46px;
+
+    	box-shadow: 0 9px #262626;
+    	cursor: pointer;
+    	display: inline-block;
+
+		font-family: OCR A Std, monospace;
+      }
+
+     .play:hover {
+	     background-color: #c80707;
+	     cursor: url("cursore.png"), auto;
+     }
+
+     .play:active {
+	  	background-color: #c80707;
+	  	box-shadow: 0 5px #666;
+	  	transform: translateY(4px);
+	 }
+
+	 .menu{
+		top: 10px;
+		width: 100%;
+		text-align: center;
+		margin-top: -85px;
+		transform: scale(0.8);
+	 }
+	 .disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+		cursor: url("cursore.png"), auto;
+	}
+	.title{
+		color: white;
+		text-align: center;
+		font-family: OCR A Std, monospace;
+		text-shadow: 4px 4px 4px black;
+	 }
+    </style>
+  </head>
+  <body>
+	<div class="menu">
+		<h1 class="title">Livello Medio &#x2694;</h1>
+		<canvas id="myCanvas" width="940" height="500"></canvas><br>
+		<a href="HomePage.html"><button class="play">Home</button></a><br><br>
+		<a href="Livello1.html"><button class="play">&#x276E;&#x276E; Livello precedente</button></a>
+		<a href="Livello3.html"><button class="play">Livello successivo &#x276F;&#x276F;</button></a>
+	</div>
+    <script type="text/javascript">
+
+      //campo da gioco
+      var canvas = document.getElementById("myCanvas");
+      var ctx = canvas.getContext("2d");
+      //sfera
+      var x = canvas.width/2;
+      var y = canvas.height-30;
+      var dx = 5;
+      var dy = -5;
+      var raggio = 10;
+      //pad(tavola)
+      var padHeight = 10;
+      var padWidth = 100;
+      var padX = (canvas.width-padWidth)/2;
+      var rightPressed = false;
+      var leftPressed = false;
+  	  //mattoncini
+  	  var mattoneRowCount = 5;
+      var mattoneColumnCount = 12;
+  	  var mattoneWidth = 75;
+  	  var mattoneHeight = 20;
+  	  var mattonePadding = 1;
+  	  var mattoneOffsetTop = 10;
+  	  var mattoneOffsetLeft = 15;
+      //punteggio
+      var punti = 0;
+      //vite
+      var vite = 3;
+
+	  //crea matrice mattoni
+  	  var mattoni = [];
+  	  for(c=0; c<mattoneColumnCount; c++) {
+  	      mattoni[c] = [];
+  		  for(r=0; r<mattoneRowCount; r++) {
+  		      mattoni[c][r] = { x: 0, y: 0, stato: 1 };
+  		  }
+  	  }
+
+      //eventi per muovere il pad con la tastiera
+      document.addEventListener("keydown", keyDownHandler, false);
+      document.addEventListener("keyup", keyUpHandler, false);
+      //eventi per  muovere il pad col mouse
+      document.addEventListener("mousemove", mouseMoveHandler, false);
+
+      //muovere il pad col mouse
+      function mouseMoveHandler(e) {
+          var relativeX = e.clientX - canvas.offsetLeft;
+          if(relativeX > 0 && relativeX < canvas.width) {
+              padX = relativeX - padWidth/2;
+          }
+      }
+
+      //muovere il pad con la tastiera
+      function keyDownHandler(e) {
+          //movimento a destra (codiceTasto = 39)
+          if(e.keyCode == 39) {
+              rightPressed = true;
+          }
+          //movimento a sinistra (codiceTasto = 37)
+          else if(e.keyCode == 37) {
+              leftPressed = true;
+          }
+      }
+      //fermare il pad
+      function keyUpHandler(e) {
+          if(e.keyCode == 39) {
+              rightPressed = false;
+          }
+          else if(e.keyCode == 37) {
+              leftPressed = false;
+          }
+      }
+
+  	  //collisione sfera-mattone
+  	  function Collisione() {
+  		    for(c=0; c<mattoneColumnCount; c++) {
+  		        for(r=0; r<mattoneRowCount; r++) {
+  			           var b = mattoni[c][r];
+                   if(b.stato == 1) {
+                      if(x > b.x && x < b.x+mattoneWidth && y > b.y && y < b.y+mattoneHeight) {
+                          dy = -dy;
+                          b.stato = 0;
+                          punti++;
+                          if(punti == mattoneRowCount*mattoneColumnCount) {
+                              alert("HAI VINTO! Ora prova il livello difficile!");
+                              document.location.assign("Livello3.html");
+                          }
+                      }
+                  }
+  			      }
+  		    }
+  	  }
+
+      //punteggio
+      function Punti() {
+        ctx.font = "16px Arial";
+        ctx.fillStyle = "#9e0606";
+        ctx.fillText("Punti: "+punti, 440, 290);
+      }
+
+      //vite
+      function Vite() {
+        ctx.font = "16px Arial";
+        ctx.fillStyle = "#9e0606";
+        ctx.fillText("Vite: "+vite, 440, 270);
+      }
+
+      //creazione sfera
+      function CreaSfera() {
+        ctx.beginPath();
+        ctx.arc(x, y, raggio, 0, Math.PI*2); //creazione forma
+        ctx.fillStyle = "#9e0606";
+        ctx.fill();
+        ctx.closePath();
+      }
+
+      //creazione pad
+      function CreaPad() {
+        ctx.beginPath();
+        ctx.rect(padX, canvas.height-padHeight, padWidth, padHeight);
+        ctx.fillStyle = "#9e0606";
+        ctx.fill();
+        ctx.closePath();
+      }
+
+  	  //creazione mattoni
+  	  function CreaMattoni() {
+  		  for(c=0; c<mattoneColumnCount; c++) {
+  			  for(r=0; r<mattoneRowCount; r++) {
+            if(mattoni[c][r].stato == 1) {
+                var mattoneX = (c*(mattoneWidth+mattonePadding))+mattoneOffsetLeft;
+                var mattoneY = (r*(mattoneHeight+mattonePadding))+mattoneOffsetTop;
+                mattoni[c][r].x = mattoneX;
+                mattoni[c][r].y = mattoneY;
+                ctx.beginPath();
+                ctx.rect(mattoneX, mattoneY, mattoneWidth, mattoneHeight);
+                ctx.fillStyle = "#9e0606";
+                ctx.fill();
+                ctx.closePath();
+            }
+  			  }
+  		  }
+  	  }
+
+      //movimento oggetti
+      function Gioco() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        CreaSfera();
+        CreaPad();
+		CreaMattoni();
+		Collisione();
+        Punti();
+        Vite();
+
+        if(x + dx > canvas.width-raggio || x + dx < raggio) {
+            dx = -dx;
+        }
+        if(y + dy < raggio) {
+            dy = -dy;
+        } else if(y + dy > canvas.height-raggio) {
+            if(x > padX && x < padX + padWidth) {
+                dy = -dy;
+            }
+            else {
+              vite--;
+              if(!vite) {
+                alert("GAME OVER");
+                document.location.assign("HomePage.html");
+              }
+              else {
+	            alert("Hai perso una vita :(");
+                x = canvas.width/2;
+                y = canvas.height-30;
+                dx = 5;
+                dy = -5;
+                padX = (canvas.width-padWidth)/2;
+              }
+            }
+        }
+
+        if(rightPressed && padX < canvas.width-padWidth) {
+            padX += 9;
+        }
+        else if(leftPressed && padX > 0) {
+            padX -= 9;
+        }
+
+        x += dx;
+        y += dy;
+		requestAnimationFrame(Gioco);
+      }
+      Gioco();
+
+    </script>
+  </body>
+</html>
